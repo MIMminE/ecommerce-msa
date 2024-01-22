@@ -1,13 +1,26 @@
 server:
-  port: 8001
+  port: 0
+  # 0번 포트로 사용하게 되면 랜덤 포트를 사용하게 된다.
 
 spring:
   application:
     name: user-service
+  h2:
+    console:
+      enabled: true
+      settings:
+        web-allow-others: true
+      path: hs-console
+
+
 eureka:
   client:
     register-with-eureka: true
     fetch-registry: true
-#    service-url:
-#      defaultZone: http://localhost:8761/eureka
-#      ?????? ????? ???? ???? ??? ??.
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+
+greeting:
+  message: Welcome to the Simple E-Commerce.
