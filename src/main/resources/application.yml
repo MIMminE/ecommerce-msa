@@ -10,11 +10,26 @@ eureka:
 spring:
   cloud:
     gateway:
+      default-filters:
+        - name: GlobalFilter
+          args:
+            baseMessage: Spring Cloud Gateway Global Filter
+            preLogger: true
+            postLogger: true
+
       routes:
         - id : user-service
           uri: http://localhost:8001
           predicates:
             - Path=/user-service/**
+          filters:
+            - name: CustomFilter
+            - name: LoggingFilter
+              args:
+                baseMessage: Hi, there.
+                preLogger: true
+                postLogger: true
+
 
   application:
     name: gateway-service
