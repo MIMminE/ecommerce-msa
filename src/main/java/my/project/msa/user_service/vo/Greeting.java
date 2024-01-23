@@ -1,4 +1,4 @@
-package my.project.msa.user_service.config.messages;
+package my.project.msa.user_service.vo;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

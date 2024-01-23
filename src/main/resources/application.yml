@@ -3,14 +3,29 @@ server:
   # 0번 포트로 사용하게 되면 랜덤 포트를 사용하게 된다.
 
 spring:
+  security:
+    user:
+      name: user
+      password: 1234
+
   application:
     name: user-service
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
   h2:
     console:
       enabled: true
       settings:
         web-allow-others: true
-      path: hs-console
+      path: /h2-console
 
 
 eureka:
