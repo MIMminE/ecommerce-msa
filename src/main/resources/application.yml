@@ -19,7 +19,7 @@ spring:
 
       routes:
         - id : user-service
-          uri: http://localhost:8001
+          uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/**
           filters:
