@@ -2,6 +2,7 @@ package my.project.msa.user_service.jpa;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import my.project.msa.user_service.dto.UserDto;
 
 @Data
 @Entity
