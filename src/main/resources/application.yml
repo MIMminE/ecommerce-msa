@@ -28,8 +28,4 @@ logging:
     my.project.msa.my_msa_order_service: info
 
 server:
-  port: 8007
-
-local:
-  server:
-    port
+  port: 0
