@@ -29,3 +29,7 @@ logging:
 
 server:
   port: 8007
+
+local:
+  server:
+    port
