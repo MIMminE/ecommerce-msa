@@ -3,8 +3,6 @@ package my.project.msa.user_service.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import my.project.msa.user_service.dto.UserDto;
-import my.project.msa.user_service.jpa.UserEntity;
-import my.project.msa.user_service.jpa.UserRepository;
 import my.project.msa.user_service.service.UserService;
 import my.project.msa.user_service.util.mapper.ModelMapperUtil;
 import my.project.msa.user_service.vo.Greeting;
@@ -15,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @RestController
