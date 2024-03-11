@@ -1,0 +1,6 @@
+# application.properties
+
+spring:
+  profiles:
+    active: dev
+  
