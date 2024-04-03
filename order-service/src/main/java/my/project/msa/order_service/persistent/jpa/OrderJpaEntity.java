@@ -1,4 +1,4 @@
-package my.project.msa.order_service.jpa;
+package my.project.msa.order_service.persistent.jpa;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.util.Date;
 @Entity
 @Data
 @Table(name="orders")
-public class OrderEntity
+public class OrderJpaEntity
 {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -29,6 +29,7 @@ public class OrderEntity
 
     @Column(nullable = false)
     private String userId;
+
     @Column(nullable = false, unique = true)
     private String orderId;
 

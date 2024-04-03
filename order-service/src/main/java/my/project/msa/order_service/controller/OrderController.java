@@ -1,21 +1,21 @@
 package my.project.msa.order_service.controller;
 
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import my.project.msa.order_service.dto.OrderDto;
-import my.project.msa.order_service.jpa.OrderEntity;
-import my.project.msa.order_service.vo.RequestOrder;
-import my.project.msa.order_service.vo.ResponseOrder;
+import my.project.msa.order_service.domain_model.Order;
+import my.project.msa.order_service.dto.request.RequestCreateOrder;
+import my.project.msa.order_service.dto.request.RequestModifyOrder;
+import my.project.msa.order_service.dto.response.ResponseOrder;
+import my.project.msa.order_service.mapper.OrderDomainMapper;
 import my.project.msa.order_service.service.OrderService;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @RestController
@@ -23,37 +23,51 @@ import java.util.List;
 @RequestMapping("/order-service")
 public class OrderController {
 
-    private final Environment env;
     private final OrderService orderService;
-    private ModelMapper mapper = new ModelMapper();
+    private final OrderDomainMapper orderMapper = OrderDomainMapper.INSTANCE;
+
+    @GetMapping("/health_check")
+    public String status(HttpServletRequest request) {
+        return String.format("It's Working in User Service %s", request.getServerPort());
+    }
 
     @PostMapping("/{userId}/orders")
     public ResponseEntity<ResponseOrder> createOrder(@PathVariable String userId,
-                                                     @RequestBody RequestOrder requestOrder) {
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        OrderDto orderDto = mapper.map(requestOrder, OrderDto.class);
-        orderDto.setUserId(userId);
+                                                     @RequestBody RequestCreateOrder requestCreateOrder) {
+        Order order = orderMapper.fromRequestCreateOrder(requestCreateOrder);
+        order.setUserId(userId);
+        Order createdOrder = orderService.createOrder(order);
 
-        OrderDto createdOrder = orderService.createOrder(orderDto);
-
-        ResponseOrder mapped = mapper.map(createdOrder, ResponseOrder.class);
-        return ResponseEntity.ok(mapped);
+        ResponseOrder responseOrder = orderMapper.toResponseOrder(createdOrder);
+        return ResponseEntity.ok(responseOrder);
     }
+
+    @PostMapping("/{userId}/orders/{orderId}/update")
+    public ResponseEntity<?> modifyOrder(@PathVariable String userId,
+                                                     @PathVariable String orderId,
+                                                     @RequestBody RequestModifyOrder requestModifyOrder) {
+
+        Order order = orderMapper.fromRequestModifyOrder(requestModifyOrder);
+        setModifyOrderValues(userId, orderId, order);
+        orderService.modifyOrder(order);
+        Order result = orderService.getOrderByOrderIdAndUserId(orderId, userId);
+
+        return ResponseEntity.ok().build();
+    }
+
 
     @GetMapping("/{userId}/orders")
     public ResponseEntity<List<ResponseOrder>> getOrder(@PathVariable("userId") String userId) {
-        Iterable<OrderEntity> orderList = orderService.getOrdersByUserId(userId);
-
-        List<ResponseOrder> result = new ArrayList<>();
-        orderList.forEach(v -> result.add(mapper.map(v, ResponseOrder.class)));
-
-        return ResponseEntity.ok(result);
+        Iterable<Order> ordersByUserId = orderService.getOrdersByUserId(userId);
+        return ResponseEntity.ok(
+                StreamSupport.stream(ordersByUserId.spliterator(), false)
+                        .map(orderMapper::toResponseOrder)
+                        .collect(Collectors.toList())
+        );
     }
 
-
-    @GetMapping("/health_check")
-    public String status() {
-        return String.format("It's Working in Order Service on PORT %s",
-                env.getProperty("local.server.port"));
+    private void setModifyOrderValues(String userId, String orderId, Order order) {
+        order.setOrderId(orderId);
+        order.setUserId(userId);
     }
 }

@@ -2,52 +2,66 @@ package my.project.msa.order_service.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import my.project.msa.order_service.dto.OrderDto;
-import my.project.msa.order_service.jpa.OrderEntity;
-import my.project.msa.order_service.jpa.OrderRepository;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
+import my.project.msa.order_service.domain_model.Order;
+import my.project.msa.order_service.mapper.OrderDomainMapper;
+import my.project.msa.order_service.persistent.jpa.OrderJpaEntity;
+import my.project.msa.order_service.persistent.jpa.OrderRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class OrderServiceImpl implements OrderService{
 
     private final OrderRepository orderRepository;
-    private ModelMapper mapper = new ModelMapper();
+    private final OrderDomainMapper orderMapper = OrderDomainMapper.INSTANCE;
 
     @Override
-    public OrderDto createOrder(OrderDto orderDetails) {
-        orderDetails.setOrderId(UUID.randomUUID().toString());
-        orderDetails.setTotalPrice(orderDetails.getQty() * orderDetails.getUnitPrice());
-        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-
-        OrderEntity mapped = mapper.map(orderDetails, OrderEntity.class);
-        log.info("order entity : {}",mapped);
-        orderRepository.save(mapped);
-
-        OrderDto map = mapper.map(mapped, OrderDto.class);
-        log.info("order dto : {}",map);
-        return map;
+    @Transactional
+    public Order createOrder(Order order) {
+        setOrderValues(order);
+        OrderJpaEntity orderJpaEntity = orderMapper.toOrderJpaEntity(order);
+        OrderJpaEntity saved = orderRepository.save(orderJpaEntity);
+        return orderMapper.fromJpaEntity(saved);
     }
 
     @Override
-    public OrderDto getOrderByOrderId(String orderId) {
-        OrderEntity byOrderId = orderRepository.findByOrderId(orderId);
-        return mapper.map(byOrderId, OrderDto.class);
+    @Transactional
+    public void modifyOrder(Order orderDetails) {
+        OrderJpaEntity jpaEntity = orderRepository.findByOrderIdAndAndUserId(orderDetails.getOrderId(), orderDetails.getUserId());
+        Integer totalPrice = orderDetails.getQty() * jpaEntity.getUnitPrice();
+
+        int modifyCount = orderRepository.updateOrder(
+                orderDetails.getQty(),
+                totalPrice,
+                orderDetails.getOrderId(),
+                orderDetails.getUserId());
+
     }
 
     @Override
-    public Iterable<OrderEntity> getOrdersByUserId(String userId) {
-        Iterable<OrderEntity> byUserId = orderRepository.findByUserId(userId);
-        List<OrderEntity> result = new ArrayList<>();
+    public Order getOrderByOrderIdAndUserId(String orderId, String userId) {
+        OrderJpaEntity orderJpaEntity = orderRepository.findByOrderIdAndAndUserId(orderId, userId);
 
-        byUserId.forEach(result::add);
-        return byUserId;
+        return orderMapper.fromJpaEntity(orderJpaEntity);
+    }
+
+    @Override
+    public Iterable<Order> getOrdersByUserId(String userId) {
+        Iterable<OrderJpaEntity> orderJpaEntities = orderRepository.findByUserId(userId);
+        return StreamSupport.stream(orderJpaEntities.spliterator(), false)
+                .map(orderMapper::fromJpaEntity)
+                .collect(Collectors.toList());
+    }
+
+    private void setOrderValues(Order order) {
+        order.setOrderId(UUID.randomUUID().toString());
+        order.setTotalPrice(order.getQty() * order.getUnitPrice());
     }
 }

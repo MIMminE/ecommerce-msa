@@ -1,4 +1,4 @@
-package my.project.msa.order_service.dto;
+package my.project.msa.order_service.domain_model;
 
 import lombok.Data;
 
@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class OrderDto implements Serializable {
+public class Order{
     private String productId;
     private Integer qty;
     private Integer unitPrice;

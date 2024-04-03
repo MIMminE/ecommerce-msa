@@ -1,10 +1,12 @@
 package my.project.msa.order_service.service;
 
-import my.project.msa.order_service.dto.OrderDto;
-import my.project.msa.order_service.jpa.OrderEntity;
+import my.project.msa.order_service.domain_model.Order;
+import my.project.msa.order_service.persistent.jpa.OrderJpaEntity;
 
 public interface OrderService {
-    OrderDto createOrder(OrderDto orderDetails);
-    OrderDto getOrderByOrderId(String orderId);
-    Iterable<OrderEntity> getOrdersByUserId(String userId);
+    Order createOrder(Order orderDetails);
+
+    void modifyOrder(Order orderDetails);
+    Order getOrderByOrderIdAndUserId(String orderId, String userId);
+    Iterable<Order> getOrdersByUserId(String userId);
 }

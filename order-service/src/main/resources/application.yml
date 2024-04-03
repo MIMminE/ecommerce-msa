@@ -5,7 +5,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create-drop
-    show-sql: true
+#    show-sql: true
     generate-ddl: true
     defer-datasource-initialization: true
 
@@ -22,9 +22,9 @@ spring:
 #  instance:
 #    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 
-logging:
-  level:
-    my.project.msa.order_service: info
+#logging:
+#  level:
+#    my.project.msa.order_service: info
 
 server:
   port: 7777
