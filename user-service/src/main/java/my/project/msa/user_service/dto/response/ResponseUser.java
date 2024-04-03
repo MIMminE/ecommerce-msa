@@ -1,4 +1,4 @@
-package my.project.msa.user_service.vo;
+package my.project.msa.user_service.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;

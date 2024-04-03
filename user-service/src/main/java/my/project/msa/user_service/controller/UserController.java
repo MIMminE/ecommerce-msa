@@ -1,63 +1,58 @@
 package my.project.msa.user_service.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AllArgsConstructor;
-import my.project.msa.user_service.dto.UserDto;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import my.project.msa.user_service.domain_model.User;
+import my.project.msa.user_service.dto.response.ResponseUser;
+import my.project.msa.user_service.mapper.UserDomainMapper;
 import my.project.msa.user_service.service.UserService;
-import my.project.msa.user_service.util.mapper.ModelMapperUtil;
-import my.project.msa.user_service.vo.Greeting;
-import my.project.msa.user_service.vo.RequestUser;
-import my.project.msa.user_service.vo.ResponseUser;
+import my.project.msa.user_service.dto.request.RequestCreateUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/user-service")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserController {
 
-//    private Environment env;
-    private Greeting greeting;
-    private ModelMapperUtil modelmapper;
-    private UserService userService;
+    private final UserService userService;
+    private final UserDomainMapper userMapper = UserDomainMapper.INSTANCE;
 
     @GetMapping("/health_check")
     public String status(HttpServletRequest request){
         return String.format("It's Working in User Service %s", request.getServerPort());
     }
 
-    @GetMapping("/welcome")
-    public String welcome(){
-//        return env.getProperty("greeting.message");
-        return greeting.getMessage();
-    }
-
     @PostMapping("/users")
-    public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user){
-        UserDto userDto = modelmapper.toUserDto(user);
-        userService.createUser(userDto);
-        ResponseUser responseUser = modelmapper.toResponseUser(userDto);
-        return new ResponseEntity<ResponseUser>(responseUser,HttpStatus.CREATED);
+    public ResponseEntity<ResponseUser> createUser(@RequestBody @Valid RequestCreateUser requestCreateUser){
+        User user = userMapper.fromRequestCreateUser(requestCreateUser);
+        User createdUser = userService.createUser(user);
+        ResponseUser responseUser = userMapper.toResponseUser(createdUser);
+
+        return new ResponseEntity<>(responseUser,HttpStatus.CREATED);
     }
 
     @GetMapping("/users")
     public ResponseEntity<List<ResponseUser>> getUsers(){
-        Iterable<UserDto> userByAll = userService.getUserByAll();
-        List<ResponseUser> result = new ArrayList<>();
-        userByAll.forEach(v ->
-                result.add(modelmapper.toResponseUser(v)));
+        Iterable<User> users = userService.getUserByAll();
 
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok().body(
+                StreamSupport.stream(users.spliterator(), false)
+                .map(userMapper::toResponseUser)
+                .collect(Collectors.toList())
+        );
     }
 
     @GetMapping("/users/{userId}")
     public ResponseEntity<ResponseUser> getUser(@PathVariable String userId){
-        ResponseUser result = modelmapper.toResponseUser(userService.getUserByUserId(userId));
-
-        return ResponseEntity.ok().body(result);
+        return ResponseEntity.ok().body(
+                userMapper.toResponseUser(userService.getUserByUserId(userId))
+        );
     }
 }

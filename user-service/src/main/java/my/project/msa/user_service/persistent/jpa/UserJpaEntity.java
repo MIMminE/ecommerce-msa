@@ -1,13 +1,12 @@
-package my.project.msa.user_service.jpa;
+package my.project.msa.user_service.persistent.jpa;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import my.project.msa.user_service.dto.UserDto;
 
 @Data
 @Entity
 @Table(name = "users")
-public class UserEntity {
+public class UserJpaEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

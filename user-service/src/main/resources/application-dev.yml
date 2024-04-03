@@ -24,19 +24,11 @@ spring:
     username: sa
 
 
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-
-greeting:
-  message: Welcome to the Simple E-Commerce.
-logging:
-  level:
-    org.springframework.security: DEBUG
-    org.springframework.web: DEBUG
+#eureka:
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+#  instance:
+#    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}

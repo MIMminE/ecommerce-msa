@@ -1,4 +1,4 @@
-package my.project.msa.user_service.vo;
+package my.project.msa.user_service.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
