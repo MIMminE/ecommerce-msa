@@ -1,4 +1,4 @@
-package my.project.msa.my_msa_order_service.jpa;
+package my.project.msa.order_service.jpa;
 
 import org.springframework.data.repository.CrudRepository;
 

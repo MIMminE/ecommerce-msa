@@ -1,4 +1,4 @@
-package my.project.msa.my_msa_order_service.dto;
+package my.project.msa.order_service.dto;
 
 import lombok.Data;
 

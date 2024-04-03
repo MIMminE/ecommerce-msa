@@ -1,4 +1,4 @@
-package my.project.msa.my_msa_order_service;
+package my.project.msa.order_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

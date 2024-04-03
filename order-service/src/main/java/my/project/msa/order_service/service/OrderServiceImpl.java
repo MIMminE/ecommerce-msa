@@ -1,10 +1,10 @@
-package my.project.msa.my_msa_order_service.service;
+package my.project.msa.order_service.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import my.project.msa.my_msa_order_service.dto.OrderDto;
-import my.project.msa.my_msa_order_service.jpa.OrderEntity;
-import my.project.msa.my_msa_order_service.jpa.OrderRepository;
+import my.project.msa.order_service.dto.OrderDto;
+import my.project.msa.order_service.jpa.OrderEntity;
+import my.project.msa.order_service.jpa.OrderRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;

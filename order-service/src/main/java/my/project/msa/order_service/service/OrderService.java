@@ -1,7 +1,7 @@
-package my.project.msa.my_msa_order_service.service;
+package my.project.msa.order_service.service;
 
-import my.project.msa.my_msa_order_service.dto.OrderDto;
-import my.project.msa.my_msa_order_service.jpa.OrderEntity;
+import my.project.msa.order_service.dto.OrderDto;
+import my.project.msa.order_service.jpa.OrderEntity;
 
 public interface OrderService {
     OrderDto createOrder(OrderDto orderDetails);

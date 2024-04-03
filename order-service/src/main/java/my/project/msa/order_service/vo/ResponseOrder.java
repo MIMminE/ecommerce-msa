@@ -1,4 +1,4 @@
-package my.project.msa.my_msa_order_service.vo;
+package my.project.msa.order_service.vo;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
