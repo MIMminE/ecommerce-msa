@@ -1,43 +1,39 @@
 package my.project.msa.catalog_service.controller;
 
-import my.project.msa.catalog_service.entity.CatalogEntity;
+import lombok.RequiredArgsConstructor;
+import my.project.msa.catalog_service.domain_model.Catalog;
+import my.project.msa.catalog_service.dto.ResponseCatalog;
+import my.project.msa.catalog_service.mapper.CatalogMapper;
 import my.project.msa.catalog_service.service.CatalogService;
-import my.project.msa.catalog_service.vo.ResponseCatalog;
-import org.modelmapper.ModelMapper;
-import org.springframework.core.env.Environment;
+import org.mapstruct.factory.Mappers;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/catalog-service")
+@RequiredArgsConstructor
 public class CatalogController {
-    Environment env;
-    CatalogService catalogService;
 
-    public CatalogController(Environment env, CatalogService catalogService) {
-        this.env = env;
-        this.catalogService = catalogService;
-    }
-
-    @GetMapping("/health_check")
-    public String status(){
-        return String.format("It's Working in User Service on PORT %s",
-                env.getProperty("local.server.port"));
-    }
+    private final CatalogService catalogService;
+    private final CatalogMapper catalogMapper = Mappers.getMapper(CatalogMapper.class);
 
     @GetMapping("/catalogs")
-    public ResponseEntity<List<ResponseCatalog>> getCatalogs(){
-        Iterable<CatalogEntity> catalogList = catalogService.getAllCatalogs();
+    public ResponseEntity<List<ResponseCatalog>> getCatalogs() {
 
-        List<ResponseCatalog> result = new ArrayList<>();
-        catalogList.forEach(v ->
-                result.add(new ModelMapper().map(v, ResponseCatalog.class)));
-        return ResponseEntity.status(HttpStatus.OK).body(result);
+        Iterable<Catalog> catalogs = catalogService.getAllCatalogs();
+        System.out.println(catalogs);
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                StreamSupport.stream(catalogs.spliterator(), false)
+                        .map(catalogMapper::toResponseCatalog)
+                        .collect(Collectors.toList())
+        );
     }
 }

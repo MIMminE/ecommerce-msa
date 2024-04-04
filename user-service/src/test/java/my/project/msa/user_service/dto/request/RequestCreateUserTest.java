@@ -41,7 +41,7 @@ class RequestCreateUserTest {
         RequestCreateUser requestCreateUser = RequestCreateUser.builder()
                 .email("U")
                 .name("testName")
-                .pwd("testPwd")
+                .pwd("testPwdgf")
                 .build();
 
         // when

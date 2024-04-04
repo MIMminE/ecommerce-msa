@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: 7666
 
 spring:
   application:
@@ -23,22 +23,12 @@ spring:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:testdb
     username: sa
-#    password: 1234
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-  instance:
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-
-greeting:
-  message: Welcome to the Simple E-Commerce.
-
-logging:
-  level:
-    my.project.mas.catalog_service: DEBUG
-#    org.springframework.security: DEBUG
-#    org.springframework.web: DEBUG
+#eureka:
+#  client:
+#    register-with-eureka: true
+#    fetch-registry: true
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka
+#  instance:
+#    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
