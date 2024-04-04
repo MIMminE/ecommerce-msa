@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -32,6 +33,7 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<ResponseUser> createUser(@RequestBody @Valid RequestCreateUser requestCreateUser){
         User user = userMapper.fromRequestCreateUser(requestCreateUser);
+        user.setUserId(UUID.randomUUID().toString().substring(0,8));
         User createdUser = userService.createUser(user);
         ResponseUser responseUser = userMapper.toResponseUser(createdUser);
 
