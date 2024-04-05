@@ -1,39 +1,33 @@
 package my.project.msa.user_service.exception;
 
+import lombok.RequiredArgsConstructor;
 import my.project.msa.user_service.dto.request.RequestCreateUser;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Locale;
+import java.util.Objects;
+
 import static my.project.msa.user_service.dto.request.RequestCreateUser.*;
+import static my.project.msa.user_service.exception.ExceptionType.*;
 
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class UserServiceExceptionHandler {
+
+    private final MessageSource messageSource;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException e) throws MethodArgumentNotValidException {
         if (e.getParameter().getParameterType().equals(RequestCreateUser.class)) {
-            if (e.getMessage().contains(EMAIL_EX_NOTNULL_MESSAGE)) {
-                return ResponseEntity.badRequest().body("유저 생성 요청에 대한 필수 정보(Email)가 누락되었습니다");
-            }
-            if (e.getMessage().contains(EMAIL_EX_FORMAT_MESSAGE)) {
-                return ResponseEntity.badRequest().body("Email 포맷이 잘못되었습니다.");
-            }
-            if (e.getMessage().contains(PASSWORD_EX_NOTNULL_MESSAGE)) {
-                return ResponseEntity.badRequest().body("유저 생성 요청에 대한 필수 정보(Password)가 누락되었습니다");
-            }
-            if (e.getMessage().contains(PASSWORD_EX_SIZE_MESSAGE)) {
-                return ResponseEntity.badRequest().body("Password는 8 ~ 16 글자 사이여야 합니다.");
-            }
-            if (e.getMessage().contains(NAME_EX_NOTNULL_MESSAGE)) {
-                return ResponseEntity.badRequest().body("유저 생성 요청에 대한 필수 정보(Name)가 누락되었습니다");
-            }
-            if (e.getMessage().contains(NAME_EX_SIZE_MESSAGE)) {
-                return ResponseEntity.badRequest().body("Name은 2글자 이상이여야 합니다.");
-            }
-
+            String ExceptionMessageCode = e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
+            return ResponseEntity.badRequest().body(
+                    messageSource.getMessage(Objects.requireNonNull(ExceptionMessageCode), null, Locale.getDefault()));
         }
         throw e;
     }

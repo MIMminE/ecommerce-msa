@@ -6,19 +6,15 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import my.project.msa.user_service.exception.ExceptionType;
+
+import static my.project.msa.user_service.exception.ExceptionType.*;
 
 @Data
 @NoArgsConstructor
 public class RequestCreateUser {
 
-    public static final String EMAIL_EX_NOTNULL_MESSAGE = "Email cannot be null";
-    public static final String EMAIL_EX_FORMAT_MESSAGE = "Bad Email Format";
-    public static final String PASSWORD_EX_NOTNULL_MESSAGE = "Password cannot be null";
-    public static final String PASSWORD_EX_SIZE_MESSAGE = "Password must be equal or grater than 8 characters and less 16 char";
-    public static final String NAME_EX_NOTNULL_MESSAGE = "Name cannot be null";
-    public static final String NAME_EX_SIZE_MESSAGE = "Name not be less than two characters";
-
-    @NotNull(message = EMAIL_EX_NOTNULL_MESSAGE)
+    @NotNull(message = EMAIL_EX_NOTNULL_MESSAGE )
     @Email(message = EMAIL_EX_FORMAT_MESSAGE)
     private String email;
 
@@ -36,5 +32,4 @@ public class RequestCreateUser {
         this.pwd = pwd;
         this.name = name;
     }
-
 }

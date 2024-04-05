@@ -10,6 +10,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Set;
 
+import static my.project.msa.user_service.exception.ExceptionType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("유저 생성 요청 Request 바인딩 예외 테스트")
@@ -28,10 +29,10 @@ class RequestCreateUserTest {
 
         // when
         Set<ConstraintViolation<RequestCreateUser>> violations = validator.validate(requestCreateUser);
-
+        System.out.println(violations);
         // then
         assertThat(violations.iterator().next().getMessage())
-                .isEqualTo(RequestCreateUser.EMAIL_EX_NOTNULL_MESSAGE);
+                .isEqualTo(EMAIL_EX_NOTNULL_MESSAGE);
     }
 
     @DisplayName("Email 포맷이 올바르지 않으면 정상적으로 예외가 발생한다.")
@@ -49,7 +50,7 @@ class RequestCreateUserTest {
 
         // then
         assertThat(violations.iterator().next().getMessage())
-                .isEqualTo(RequestCreateUser.EMAIL_EX_FORMAT_MESSAGE);
+                .isEqualTo(EMAIL_EX_FORMAT_MESSAGE);
     }
 
     @DisplayName("Pwd가 입력되지 않으면 정상적으로 예외가 발생한다.")
@@ -66,7 +67,7 @@ class RequestCreateUserTest {
 
         // then
         assertThat(violations.iterator().next().getMessage())
-                .isEqualTo(RequestCreateUser.PASSWORD_EX_NOTNULL_MESSAGE);
+                .isEqualTo(PASSWORD_EX_NOTNULL_MESSAGE);
     }
 
     @DisplayName("Pwd가 길이가 8보다 작거나 16글자보다 길면 정상적으로 예외가 발생한다.")
@@ -85,7 +86,7 @@ class RequestCreateUserTest {
 
         // then
         assertThat(violations.iterator().next().getMessage())
-                .isEqualTo(RequestCreateUser.PASSWORD_EX_SIZE_MESSAGE);
+                .isEqualTo(PASSWORD_EX_SIZE_MESSAGE);
     }
 
     @DisplayName("Name이 입력되지 않으면 정상적으로 예외가 발생한다.")
@@ -102,7 +103,7 @@ class RequestCreateUserTest {
 
         // then
         assertThat(violations.iterator().next().getMessage())
-                .isEqualTo(RequestCreateUser.NAME_EX_NOTNULL_MESSAGE);
+                .isEqualTo(NAME_EX_NOTNULL_MESSAGE);
     }
 
     @DisplayName("Name이 길이가 2글자보다 작으면 정상적으로 예외가 발생한다.")
@@ -120,6 +121,6 @@ class RequestCreateUserTest {
 
         // then
         assertThat(violations.iterator().next().getMessage())
-                .isEqualTo(RequestCreateUser.NAME_EX_SIZE_MESSAGE);
+                .isEqualTo(NAME_EX_SIZE_MESSAGE);
     }
 }
