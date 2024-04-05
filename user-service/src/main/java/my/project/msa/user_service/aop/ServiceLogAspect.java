@@ -9,9 +9,10 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 @Slf4j
-public class ControllerLogAspect {
-    @Before("my.project.msa.user_service.aop.PointCuts.allUserController()")
-    public void beforeAdvice(JoinPoint point) {
-        log.info("Controller Call : {} , params : {} ", point.getSignature(), point.getArgs());
+public class ServiceLogAspect {
+
+    @Before("my.project.msa.user_service.aop.PointCuts.allUserService()")
+    public void beforeAdvice(JoinPoint point){
+        log.info("Service Call : {} , params : {} ", point.getSignature(), point.getArgs());
     }
 }
