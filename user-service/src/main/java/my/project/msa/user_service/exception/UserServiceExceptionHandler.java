@@ -2,7 +2,6 @@ package my.project.msa.user_service.exception;
 
 import lombok.RequiredArgsConstructor;
 import my.project.msa.user_service.dto.request.RequestCreateUser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +11,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Locale;
 import java.util.Objects;
-
-import static my.project.msa.user_service.dto.request.RequestCreateUser.*;
-import static my.project.msa.user_service.exception.ExceptionType.*;
 
 @RestControllerAdvice
 @RequiredArgsConstructor

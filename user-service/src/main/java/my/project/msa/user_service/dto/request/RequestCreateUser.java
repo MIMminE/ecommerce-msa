@@ -6,9 +6,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import my.project.msa.user_service.exception.ExceptionType;
 
-import static my.project.msa.user_service.exception.ExceptionType.*;
+import static my.project.msa.user_service.exception.ExceptionHolder.*;
 
 @Data
 @NoArgsConstructor

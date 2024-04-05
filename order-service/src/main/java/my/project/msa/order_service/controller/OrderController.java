@@ -2,6 +2,7 @@ package my.project.msa.order_service.controller;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import my.project.msa.order_service.domain_model.Order;
@@ -33,7 +34,7 @@ public class OrderController {
 
     @PostMapping("/{userId}/orders")
     public ResponseEntity<ResponseOrder> createOrder(@PathVariable String userId,
-                                                     @RequestBody RequestCreateOrder requestCreateOrder) {
+                                                     @RequestBody @Valid RequestCreateOrder requestCreateOrder) {
         Order order = orderMapper.fromRequestCreateOrder(requestCreateOrder);
         order.setUserId(userId);
         Order createdOrder = orderService.createOrder(order);
@@ -45,12 +46,11 @@ public class OrderController {
     @PostMapping("/{userId}/orders/{orderId}/update")
     public ResponseEntity<?> modifyOrder(@PathVariable String userId,
                                                      @PathVariable String orderId,
-                                                     @RequestBody RequestModifyOrder requestModifyOrder) {
+                                                     @RequestBody @Valid RequestModifyOrder requestModifyOrder) {
 
         Order order = orderMapper.fromRequestModifyOrder(requestModifyOrder);
         setModifyOrderValues(userId, orderId, order);
         orderService.modifyOrder(order);
-        Order result = orderService.getOrderByOrderIdAndUserId(orderId, userId);
 
         return ResponseEntity.ok().build();
     }

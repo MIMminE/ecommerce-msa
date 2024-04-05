@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Set;
 
-import static my.project.msa.user_service.exception.ExceptionType.*;
+import static my.project.msa.user_service.exception.ExceptionHolder.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("유저 생성 요청 Request 바인딩 예외 테스트")
