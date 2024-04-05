@@ -22,7 +22,6 @@ public class CatalogServiceImpl implements CatalogService{
     @Override
     public Iterable<Catalog> getAllCatalogs() {
         Iterable<CatalogJpaEntity> entities = catalogRepository.findAll();
-        System.out.println(entities);
         return StreamSupport.stream(entities.spliterator(), false)
                 .map(catalogMapper::fromCatalogJpaEntity)
                 .collect(Collectors.toList());
