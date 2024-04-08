@@ -4,17 +4,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import my.project.msa.user_service.domain_model.User;
+import my.project.msa.user_service.dto.request.RequestCreateUser;
+import my.project.msa.user_service.dto.response.ListResponseUser;
 import my.project.msa.user_service.dto.response.ResponseUser;
 import my.project.msa.user_service.mapper.UserDomainMapper;
 import my.project.msa.user_service.service.UserService;
-import my.project.msa.user_service.dto.request.RequestCreateUser;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -32,23 +31,21 @@ public class UserController {
 
     @PostMapping("/users")
     public ResponseEntity<ResponseUser> createUser(@RequestBody @Valid RequestCreateUser requestCreateUser){
-        User user = userMapper.fromRequestCreateUser(requestCreateUser);
-        user.setUserId(UUID.randomUUID().toString().substring(0,8));
-        User createdUser = userService.createUser(user);
+        User createdUser = userService.createUser(requestCreateUser);
         ResponseUser responseUser = userMapper.toResponseUser(createdUser);
-
+        System.out.println(responseUser);
         return new ResponseEntity<>(responseUser,HttpStatus.CREATED);
     }
 
-    @GetMapping("/users")
-    public ResponseEntity<List<ResponseUser>> getUsers(){
-        Iterable<User> users = userService.getUserByAll();
 
-        return ResponseEntity.ok().body(
-                StreamSupport.stream(users.spliterator(), false)
+    @GetMapping("/users")
+    public ResponseEntity<ListResponseUser> getUsers(){
+        Iterable<User> users = userService.getUserByAll();
+        ListResponseUser listResponseUser = new ListResponseUser(StreamSupport.stream(users.spliterator(), false)
                 .map(userMapper::toResponseUser)
-                .collect(Collectors.toList())
-        );
+                .toList());
+        System.out.println(listResponseUser);
+        return new ResponseEntity<>(listResponseUser, HttpStatus.OK);
     }
 
     @GetMapping("/users/{userId}")
@@ -56,5 +53,10 @@ public class UserController {
         return ResponseEntity.ok().body(
                 userMapper.toResponseUser(userService.getUserByUserId(userId))
         );
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<List<String>> test(){
+        return ResponseEntity.ok(List.of("test","test"));
     }
 }

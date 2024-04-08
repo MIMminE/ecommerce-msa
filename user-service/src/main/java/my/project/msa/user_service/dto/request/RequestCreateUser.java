@@ -25,10 +25,14 @@ public class RequestCreateUser {
     @Size(min = 2, message = NAME_EX_SIZE_MESSAGE)
     private String name;
 
+    @NotNull(message = GROUP_EX_NOTNULL_MESSAGE)
+    private String group;
+
     @Builder
-    private RequestCreateUser(String email, String pwd, String name) {
+    private RequestCreateUser(String email, String pwd, String name, String group) {
         this.email = email;
         this.pwd = pwd;
         this.name = name;
+        this.group = group;
     }
 }

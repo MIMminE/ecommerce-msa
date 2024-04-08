@@ -18,6 +18,15 @@ public class UserServiceExceptionHandler {
 
     private final MessageSource messageSource;
 
+    @ExceptionHandler(ServiceValidException.class)
+    public ResponseEntity<String> handleServiceValidException(ServiceValidException e) {
+        String ExceptionMessageCode = e.getMessage();
+
+        return ResponseEntity.badRequest().body(
+                messageSource.getMessage(Objects.requireNonNull(ExceptionMessageCode), null, Locale.getDefault()));
+
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleValidationException(MethodArgumentNotValidException e) throws MethodArgumentNotValidException {
         if (e.getParameter().getParameterType().equals(RequestCreateUser.class)) {
@@ -38,5 +47,10 @@ public class UserServiceExceptionHandler {
         }
 
         throw e;
+    }
+
+    @ExceptionHandler(Exception.class)
+    public void Ex(Exception e) {
+        e.printStackTrace();
     }
 }
