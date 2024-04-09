@@ -12,34 +12,26 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface UserDomainMapper {
-    UserDomainMapper INSTANCE = Mappers.getMapper(UserDomainMapper.class);
+public interface UserMapper {
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
     ResponseUser toResponseUser(User source);
 
     User fromUserJpaEntity(UserEntity source);
 
-    @Mapping(target = "group",ignore = true)
     User fromRequestCreateUser(RequestCreateUser source);
 
-    UserEntity toUserJpaEntity(User source);
+//    @Mapping(target = "group",ignore = true)
+//    UserEntity toUserJpaEntity(User source);
 
-    default Group map(GroupEntity source) {
-        return Group.builder()
-                .groupName(source.getGroupName())
-                .leaderName(source.getLeaderInfo().getLeaderName())
-                .leaderNumber(source.getLeaderInfo().getLeaderNumber())
-                .members(source.getMembers().stream()
-                        .map(UserEntity::getName)
-                        .toList())
-                .build();
+    default String map(GroupEntity source) {
+        return source.getGroupName();
     }
+
 
     default GroupEntity map(Group source) {
         return GroupEntity.builder()
                 .groupName(source.getGroupName())
-                .leaderName(source.getLeaderName())
-                .leaderNumber(source.getLeaderNumber())
                 .build();
     }
 }

@@ -2,14 +2,14 @@ package my.project.msa.user_service.domain_model;
 
 import lombok.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Getter
 @Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
-    private String email;
-    private String name;
-    private String pwd;
     private String userId;
-    private Group group;
+    private String pwd;
+    private String name;
+    private String email;
+    private String group;
 }

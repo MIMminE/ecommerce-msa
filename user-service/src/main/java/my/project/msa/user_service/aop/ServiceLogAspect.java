@@ -19,7 +19,7 @@ public class ServiceLogAspect {
     }
 
     @AfterReturning(value = "my.project.msa.user_service.aop.PointCuts.allUserService()", returning = "result")
-    public void afterAdvice(JoinPoint point, Object  result) {
+    public void afterAdvice(JoinPoint point, ResponseEntity<?> result) {
         log.info("Service {} return {}", point.getSignature().toShortString(), result.toString());
     }
 }

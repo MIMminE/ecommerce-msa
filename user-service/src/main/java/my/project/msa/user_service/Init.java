@@ -2,6 +2,7 @@ package my.project.msa.user_service;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import my.project.msa.user_service.domain_model.vo.GroupAuthority;
 import my.project.msa.user_service.persistent.jpa.group.GroupEntity;
 import my.project.msa.user_service.persistent.jpa.group.GroupRepository;
 import org.springframework.stereotype.Component;
@@ -30,13 +31,22 @@ public class Init {
                 List.of(
                         GroupEntity.builder()
                                 .groupName("groupA")
-                                .leaderName("A")
-                                .leaderNumber("123-123")
+                                .groupAuthority(
+                                        GroupAuthority.builder()
+                                                .agricultural(true)
+                                                .aquatic(true)
+                                                .livestock(false)
+                                                .build()
+                                )
                                 .build(),
                         GroupEntity.builder()
                                 .groupName("groupB")
-                                .leaderName("B")
-                                .leaderNumber("456-456")
+                                .groupAuthority(
+                                        GroupAuthority.builder()
+                                                .agricultural(false)
+                                                .aquatic(false)
+                                                .livestock(true)
+                                                .build())
                                 .build())
         );
     }
