@@ -15,7 +15,7 @@ public class ServiceLogAspect {
 
     @Before("my.project.msa.user_service.aop.PointCuts.allUserService()")
     public void beforeAdvice(JoinPoint point) {
-        log.info("Service Call : {} , params : {} ", point.getSignature(), point.getArgs());
+        log.info("Service Call : {} , params : {} ", point.getSignature().toShortString(), point.getArgs());
     }
 
     @AfterReturning(value = "my.project.msa.user_service.aop.PointCuts.allUserService()", returning = "result")

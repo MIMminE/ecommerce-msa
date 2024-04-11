@@ -40,6 +40,8 @@ management:
 #    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
 #logging:
 #  level:
+
+
 #    my.project.msa.user_service.aop.ControllerLogAspect: info
 #    my.project.msa.user_service.aop.ServiceLogAspect: OFF
 

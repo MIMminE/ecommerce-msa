@@ -1,16 +1,28 @@
 package my.project.msa.user_service.dto.response;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import my.project.msa.user_service.domain_model.Group;
+import my.project.msa.user_service.domain_model.User;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Getter
-@RequiredArgsConstructor
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class ResponseGroup {
-    @Setter
+
     private String groupId;
-    private final String groupName;
-    private final List<String> members;
+    private String groupName;
+    private List<String> members;
+
+    static public ResponseGroup fromGroup(Group group) {
+        return ResponseGroup.builder()
+                .groupName(group.getGroupName())
+                .members(group.getMembers().stream()
+                        .map(User::getName)
+                        .collect(Collectors.toList()))
+                .build();
+    }
 }

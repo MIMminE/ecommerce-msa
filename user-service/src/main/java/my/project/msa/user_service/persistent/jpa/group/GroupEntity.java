@@ -7,6 +7,7 @@ import my.project.msa.user_service.domain_model.Group;
 import my.project.msa.user_service.persistent.CreatedBaseEntity;
 import my.project.msa.user_service.persistent.jpa.user.UserEntity;
 import my.project.msa.user_service.domain_model.vo.GroupAuthority;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,10 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class GroupEntity extends CreatedBaseEntity {
 
     @Id
@@ -25,6 +28,7 @@ public class GroupEntity extends CreatedBaseEntity {
 
     @NotNull
     private String groupName;
+    private String encodedSecretKey;
 
     @Embedded
     @NotNull
@@ -33,13 +37,6 @@ public class GroupEntity extends CreatedBaseEntity {
     @ToString.Exclude
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserEntity> members = new ArrayList<>();
-
-    @Builder
-    private GroupEntity(String groupName, GroupAuthority groupAuthority, List<UserEntity> members) {
-        this.groupName = groupName;
-        this.groupAuthority = groupAuthority;
-        this.members = members;
-    }
 
     // 연관관계 편의 메서드
     public void addUser(UserEntity user) {
@@ -50,6 +47,15 @@ public class GroupEntity extends CreatedBaseEntity {
     public void removeUser(UserEntity user) {
         this.members.remove(user);
         user.setGroup(null);
+    }
+
+    public static GroupEntity fromGroupDomain(Group group) {
+        return GroupEntity.builder()
+                .groupName(group.getGroupName())
+                .groupAuthority(group.getGroupAuthority())
+                .encodedSecretKey(null)
+                .members(null)
+                .build();
     }
 
     public static Group toGroupDomain(GroupEntity groupEntity) {

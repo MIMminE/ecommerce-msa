@@ -1,36 +1,33 @@
 package my.project.msa.user_service.controller;
 
 import my.project.msa.user_service.dto.request.RequestCreateUser;
+import my.project.msa.user_service.dto.request.RequestDeleteUser;
 import my.project.msa.user_service.dto.response.ResponseUser;
+import my.project.msa.user_service.dto.response.ResponseUsers;
+import my.project.msa.user_service.persistent.jpa.group.GroupEntity;
+import my.project.msa.user_service.persistent.jpa.user.UserEntity;
+import my.project.msa.user_service.test_support.ControllerTestSupport;
+import org.assertj.core.groups.Tuple;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UserControllerTest {
+class UserControllerTest extends ControllerTestSupport {
 
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    public MessageSource messageSource;
-
-    @Autowired
-    private TestRestTemplate restTemplate;
 
     @DisplayName("/health_check 엔드포인트에 요청을 보내고 결과를 반환받는다.")
     @Test
@@ -46,15 +43,18 @@ class UserControllerTest {
     }
 
 
-    @DisplayName("name, pwd, email 이 정상적으로 전달될 때 정상 응답이 반환된다.")
+    @DisplayName("/users EndPoint 에 대한 요청이 정상적으로 수행된다.")
     @Test
+    @Transactional
     void createUserSuccess() {
+
         // given
         String url = createUrlToEndpoint("users");
         RequestCreateUser requestCreateUser = RequestCreateUser.builder()
                 .name("testname")
                 .pwd("testpass")
-                .email("test@example.com")
+                .email("test1@example.com")
+                .group("groupA")
                 .build();
 
         // when
@@ -74,8 +74,7 @@ class UserControllerTest {
         );
     }
 
-
-    @DisplayName("이메일을 입력하지 않았거나, 올바른 이메일 포맷이 아니면 예외 응답이 반환된다.")
+    @DisplayName("/users EndPoint 에 대한 요청에 대한 예외를 정상적으로 받는다.")
     @ParameterizedTest
     @MethodSource("provideEmailTestArgument")
     void createUserBadEmail(String email, String exceptionMessageCode) {
@@ -86,12 +85,15 @@ class UserControllerTest {
                 .name("testname")
                 .pwd("testpass")
                 .email(email)
+                .group("groupA")
                 .build();
         // when
         ResponseEntity<String> result = restTemplate.postForEntity(url, requestCreateUser, String.class);
         // then
         assertThat(result.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(result.getBody().toString()).isEqualTo(expected);
+
+
     }
 
 
@@ -119,7 +121,8 @@ class UserControllerTest {
         RequestCreateUser requestCreateUser = RequestCreateUser.builder()
                 .name("testname")
                 .pwd(password)
-                .email("test@example.com")
+                .email("test2@example.com")
+                .group("groupA")
                 .build();
         // when
         ResponseEntity<String> result = restTemplate.postForEntity(url, requestCreateUser, String.class);
@@ -150,7 +153,8 @@ class UserControllerTest {
         RequestCreateUser requestCreateUser = RequestCreateUser.builder()
                 .name(name)
                 .pwd("testPassword")
-                .email("test@example.com")
+                .email("test3@example.com")
+                .group("groupA")
                 .build();
         // when
         ResponseEntity<String> result = restTemplate.postForEntity(url, requestCreateUser, String.class);
@@ -160,8 +164,140 @@ class UserControllerTest {
         assertThat(result.getBody().toString()).isEqualTo(expected);
     }
 
+    @DisplayName("/users/{userId}/remove Endpoint 요청을 보내면 userId와 매칭되는 유저 정보를 삭제에 성공한다.")
+    @Test
+    @Transactional
+    void deleteUserSuccess() {
 
-    private String createUrlToEndpoint(String endpoint) {
-        return "http://localhost:" + port + "/user-service/" + endpoint;
+        // given
+        // 서버에 유저 정보 등록
+        String testName = "testName";
+        String testPassword = "testPassword";
+        String testEmail = "test4@example.com";
+        String groupName = "groupA";
+
+        String createUrl = createUrlToEndpoint("users");
+        RequestCreateUser requestCreateUser = RequestCreateUser.builder()
+                .name(testName)
+                .pwd(testPassword)
+                .email(testEmail)
+                .group(groupName)
+                .build();
+
+        ResponseEntity<ResponseUser> createdResponse =
+                restTemplate.postForEntity(createUrl, requestCreateUser, ResponseUser.class);
+
+        String userId = Objects.requireNonNull(createdResponse.getBody()).getUserId();
+
+        String url = createUrlToEndpoint(String.format("users/%s/remove", userId));
+        RequestDeleteUser request = new RequestDeleteUser(testPassword);
+
+        // when
+        ResponseEntity<ResponseUser> result = restTemplate.postForEntity(url, request, ResponseUser.class);
+
+        // then
+        assertThat(result.getBody()).extracting("userId", "name").contains(userId, testName);
     }
+
+    @DisplayName("/users/{userId}/remove Endpoint 요청에 매칭되는 유저 정보가 없다면 예외를 반환한다.")
+    @Test
+    @Transactional
+    void deleteUserFail() {
+        // given
+        // 서버에 유저 정보 등록
+        String testName = "testName";
+        String testPassword = "testPassword1";
+        String testEmail = "test5@example.com";
+        String groupName = "groupA";
+
+        String createUrl = createUrlToEndpoint("users");
+        RequestCreateUser requestCreateUser = RequestCreateUser.builder()
+                .name(testName)
+                .pwd(testPassword)
+                .email(testEmail)
+                .group(groupName)
+                .build();
+
+        ResponseEntity<ResponseUser> createdResponse =
+                restTemplate.postForEntity(createUrl, requestCreateUser, ResponseUser.class);
+
+        String userId = Objects.requireNonNull(createdResponse.getBody()).getUserId();
+
+        String url = createUrlToEndpoint(String.format("users/%s/remove", userId));
+        RequestDeleteUser request = new RequestDeleteUser("failPassword");
+
+        // when
+        ResponseEntity<String> result = restTemplate.postForEntity(url, request, String.class);
+
+        // then
+        assertThat(result.getBody()).isEqualTo("유저 정보를 찾을 수 없습니다.");
+    }
+
+
+    @DisplayName("GET /users Endpoint 요청을 보내면 등록되어 있는 유저 정보를 반환한다.")
+    @Test
+    @Transactional
+    void getUsers() {
+
+        // given
+        // 서버에 유저 정보 등록
+        String testName = "testName";
+        String testPassword = "testPassword";
+        String testEmail = "test6@example.com";
+        String groupName = "groupA";
+
+        ResponseEntity<ResponseUser> createdResponse =
+                restTemplate.postForEntity(createUrlToEndpoint("users"), RequestCreateUser.builder()
+                        .name(testName)
+                        .pwd(testPassword)
+                        .email(testEmail)
+                        .group(groupName)
+                        .build(), ResponseUser.class);
+
+        String testName2 = "testName";
+        String testPassword2 = "testPassword2";
+        String testEmail2 = "test2@example.com";
+        String groupName2 = "groupA";
+
+        ResponseEntity<ResponseUser> createdResponse2 =
+                restTemplate.postForEntity(createUrlToEndpoint("users"), RequestCreateUser.builder()
+                        .name(testName2)
+                        .pwd(testPassword2)
+                        .email(testEmail2)
+                        .group(groupName2)
+                        .build(), ResponseUser.class);
+
+        // when
+        String url = createUrlToEndpoint("users");
+        ResponseEntity<ResponseUsers> result = restTemplate.getForEntity(url, ResponseUsers.class);
+
+        // then
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(result.getBody().getResult())
+                .extracting("userId", "name", "email", "group")
+                .contains(
+                        Tuple.tuple(Objects.requireNonNull(createdResponse.getBody()).getUserId(),
+                                testName,
+                                testEmail,
+                                groupName),
+                        Tuple.tuple(Objects.requireNonNull(createdResponse2.getBody()).getUserId(),
+                                testName2,
+                                testEmail2,
+                                groupName2)
+
+                );
+    }
+
+    @DisplayName("/users/{userId} Endpoint 요청을 보내면 userId와 매칭되는 유저 정보를 반환한다.")
+    @Test
+    void getUser() {
+        String url = createUrlToEndpoint("health_check");
+
+        // when
+        ResponseEntity<String> forEntity = restTemplate.getForEntity(url, String.class);
+
+        // then
+        assertThat(forEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
 }

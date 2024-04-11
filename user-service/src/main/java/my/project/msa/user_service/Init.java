@@ -13,21 +13,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class Init {
 
-    private final GroupRepository departmentRepository;
+    private final GroupRepository groupRepository;
 
     @PostConstruct
     void init() {
         InitDepartmentRepository();
-        List<GroupEntity> all = departmentRepository.findAll();
+        List<GroupEntity> all = groupRepository.findAll();
         for (GroupEntity departmentEntity : all) {
             System.out.println(departmentEntity);
         }
     }
 
-
     private void InitDepartmentRepository() {
 
-        departmentRepository.saveAll(
+        groupRepository.saveAll(
                 List.of(
                         GroupEntity.builder()
                                 .groupName("groupA")

@@ -7,7 +7,6 @@ import my.project.msa.user_service.dto.request.RequestDeleteUser;
 public interface UserService {
     User createUser(RequestCreateUser request);
     User getUserByUserId(String userId);
-
-    void deleteUser(RequestDeleteUser request, String userId);
+    User deleteUser(RequestDeleteUser request, String userId);
     Iterable<User> getUserByAll();
 }

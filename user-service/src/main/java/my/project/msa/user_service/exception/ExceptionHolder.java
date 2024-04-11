@@ -10,4 +10,9 @@ public abstract class ExceptionHolder {
     public static final String GROUP_EX_NOTNULL_MESSAGE = "request_valid.group.not_null";
     public static final String SERVICE_VALID_EX_FAIL_GROUP_FIND = "service_valid.group.not_found";
     public static final String SERVICE_VALID_EX_FAIL_USER_FIND = "service_valid.user.not_found";
+    public static final String REQUEST_VALID_GROUP_NAME_NOT_BLANK = "request_valid.group_name.not_blank";
+    public static final String REQUEST_VALID_GROUP_NAME_SIZE = "request_valid.group_name.size";
+    public static final String REQUEST_VALID_GROUP_AUTHORITY_NOT_BLANK = "request_valid.group_authority.not_blank";
+    public static final String REQUEST_VALID_SECRET_KEY_NOT_BLANK = "request_valid.secret_key.not_blank";
+    public static final String REQUEST_VALID_SECRET_KEY_SIZE = "request_valid.secret_key.size";
 }

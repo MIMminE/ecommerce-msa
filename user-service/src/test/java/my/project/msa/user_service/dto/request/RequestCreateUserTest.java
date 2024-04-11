@@ -25,6 +25,7 @@ class RequestCreateUserTest {
         RequestCreateUser requestCreateUser = RequestCreateUser.builder()
                 .name("testName")
                 .pwd("testPwd123")
+                .group("groupA")
                 .build();
 
         // when
@@ -43,6 +44,7 @@ class RequestCreateUserTest {
                 .email("U")
                 .name("testName")
                 .pwd("testPwdgf")
+                .group("groupA")
                 .build();
 
         // when
@@ -60,6 +62,7 @@ class RequestCreateUserTest {
         RequestCreateUser requestCreateUser = RequestCreateUser.builder()
                 .email("testEmail@naver.com")
                 .name("testName")
+                .group("groupA")
                 .build();
 
         // when
@@ -79,6 +82,7 @@ class RequestCreateUserTest {
                 .email("testEmail@naver.com")
                 .pwd(pwd)
                 .name("testName")
+                .group("groupA")
                 .build();
 
         // when
@@ -96,6 +100,7 @@ class RequestCreateUserTest {
         RequestCreateUser requestCreateUser = RequestCreateUser.builder()
                 .email("testEmail@naver.com")
                 .pwd("test1234")
+                .group("groupA")
                 .build();
 
         // when
@@ -114,6 +119,7 @@ class RequestCreateUserTest {
                 .email("testEmail@naver.com")
                 .pwd("test1234")
                 .name("A")
+                .group("groupA")
                 .build();
 
         // when

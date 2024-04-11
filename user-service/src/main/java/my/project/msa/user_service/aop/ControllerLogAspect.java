@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class ControllerLogAspect {
     @Before("my.project.msa.user_service.aop.PointCuts.allUserController()")
     public void beforeAdvice(JoinPoint point) {
-        log.info("Controller Call : {} , params : {} ", point.getSignature(), point.getArgs());
+        log.info("Controller Call : {} , params : {} ", point.getSignature().toShortString() , point.getArgs());
     }
 
     @AfterReturning(value = "my.project.msa.user_service.aop.PointCuts.allUserController()", returning = "responseEntity")

@@ -13,4 +13,5 @@ public class Group {
     private String groupName;
     private GroupAuthority groupAuthority;
     private List<User> members;
+    private String secretKey;
 }

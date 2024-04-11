@@ -6,13 +6,14 @@ import my.project.msa.user_service.domain_model.User;
 import my.project.msa.user_service.dto.request.RequestCreateUser;
 import my.project.msa.user_service.persistent.CreatedBaseEntity;
 import my.project.msa.user_service.persistent.jpa.group.GroupEntity;
+import my.project.msa.user_service.util.PasswordEncoder;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
+@Getter @Setter @ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class UserEntity extends CreatedBaseEntity {
 
     @Id
@@ -35,14 +36,6 @@ public class UserEntity extends CreatedBaseEntity {
     @JoinColumn(name = "group_id")
     private GroupEntity group;
 
-    @Builder
-    private UserEntity(String email, String name, String userId, String encryptPwd) {
-        this.email = email;
-        this.name = name;
-        this.userId = userId;
-        this.encryptPwd = encryptPwd;
-    }
-
     public static UserEntity fromRequestCreateUser(RequestCreateUser request) {
         return UserEntity.builder()
                 .email(request.getEmail())
@@ -60,4 +53,12 @@ public class UserEntity extends CreatedBaseEntity {
                 .build();
     }
 
+    public static UserEntity fromUserDomain(User user) {
+        return UserEntity.builder()
+                .name(user.getName())
+                .email(user.getEmail())
+                .group(null)
+                .encryptPwd(null)
+                .build();
+    }
 }

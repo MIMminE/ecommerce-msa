@@ -4,12 +4,9 @@ import lombok.*;
 
 @Getter
 @Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class RequestDeleteUser {
     String pwd;
 
-    @Builder
-    private RequestDeleteUser(String pwd) {
-        this.pwd = pwd;
-    }
 }

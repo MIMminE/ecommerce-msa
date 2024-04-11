@@ -1,26 +1,28 @@
 package my.project.msa.user_service.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import my.project.msa.user_service.domain_model.Group;
+import my.project.msa.user_service.dto.request.RequestGroup;
+import my.project.msa.user_service.dto.request.RequestRemoveGroup;
+import my.project.msa.user_service.dto.response.ResponseGroup;
 import my.project.msa.user_service.dto.response.ResponseGroups;
-import my.project.msa.user_service.mapper.GroupMapper;
-import my.project.msa.user_service.mapper.UserMapper;
 import my.project.msa.user_service.service.GroupService;
+import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
+import java.util.Objects;
 import java.util.stream.StreamSupport;
 
 @RestController
-@RequestMapping("/user-service")
+@RequestMapping("/group-service")
 @RequiredArgsConstructor
 public class GroupController {
 
     private final GroupService groupService;
-    private final GroupMapper groupMapper = GroupMapper.INSTANCE;
-    private final UserMapper userMapper = UserMapper.INSTANCE;
 
     @GetMapping("/groups")
     public ResponseEntity<ResponseGroups> getGroups() {
@@ -28,7 +30,51 @@ public class GroupController {
 
         return ResponseEntity.ok(
                 new ResponseGroups(StreamSupport.stream(groups.spliterator(), false)
-                .map(groupMapper::toResponseGroup)
+                .map(ResponseGroup::fromGroup)
                 .toList()));
+    }
+
+    @GetMapping("/groups/{groupId}")
+    public ResponseEntity<ResponseGroup> getGroup(@PathVariable Long groupId){
+        Group group = groupService.findGroup(groupId);
+
+        return ResponseEntity.ok(ResponseGroup.fromGroup(group));
+    }
+
+
+    @PostMapping("/groups")
+    public ResponseEntity<ResponseGroup> createGroup(@Valid @RequestBody RequestGroup requestGroup){
+
+        Group group = RequestGroup.toGroup(requestGroup);
+        Long groupId = groupService.createGroup(group);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{groupId}")
+                .buildAndExpand(groupId).toUri();
+
+        return ResponseEntity.created(location).body(ResponseGroup.fromGroup(Objects.requireNonNull(group)));
+    }
+
+    @PostMapping("/groups/{groupId}/modify")
+    public ResponseEntity<ResponseGroup> modifyGroup(@PathVariable Long groupId,
+                                                     @Valid @RequestBody RequestGroup requestGroup){
+
+        Group group = RequestGroup.toGroup(requestGroup);
+
+        Group modifiedGroup = groupService.modifyGroup(groupId, group, requestGroup.getEncodedSecretKey());
+
+        return ResponseEntity.ok().body(ResponseGroup.fromGroup(modifiedGroup));
+    }
+
+    @PostMapping("groups/{groupId}/remove")
+    public ResponseEntity<ResponseGroup> removeGroup(@PathVariable Long groupId,
+                                                     @Valid @RequestBody RequestRemoveGroup requestRemoveGroup){
+
+        Group group = RequestRemoveGroup.toGroup(requestRemoveGroup);
+
+        Group removedGroup = groupService.removeGroup(groupId, group, requestRemoveGroup.getEncodedSecretKey());
+
+        return ResponseEntity.ok().body(ResponseGroup.fromGroup(removedGroup));
     }
 }

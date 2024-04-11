@@ -6,7 +6,6 @@ import my.project.msa.user_service.domain_model.User;
 import my.project.msa.user_service.dto.request.RequestCreateUser;
 import my.project.msa.user_service.dto.request.RequestDeleteUser;
 import my.project.msa.user_service.exception.ServiceValidException;
-import my.project.msa.user_service.mapper.UserMapper;
 import my.project.msa.user_service.persistent.jpa.group.GroupEntity;
 import my.project.msa.user_service.persistent.jpa.group.GroupRepository;
 import my.project.msa.user_service.persistent.jpa.user.UserEntity;
@@ -27,23 +26,21 @@ import static my.project.msa.user_service.exception.ExceptionHolder.SERVICE_VALI
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 @Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userJpaRepository;
     private final GroupRepository groupRepository;
-    private final UserMapper userMapper = UserMapper.INSTANCE;
 
-    @Transactional
+
     @Override
     public User createUser(RequestCreateUser request) {
         UserEntity savedEntity = createUserEntity(request);
-        return userMapper.fromUserJpaEntity(savedEntity);
+        return UserEntity.toUserDomain(savedEntity);
     }
 
-    @Transactional
     @Override
-    public void deleteUser(RequestDeleteUser request, String userId) {
+    public User deleteUser(RequestDeleteUser request, String userId) {
         Optional<UserEntity> user = userJpaRepository.findByUserId(userId);
         String encodePassword = PasswordEncoder.encodePassword(request.getPwd());
 
@@ -52,16 +49,18 @@ public class UserServiceImpl implements UserService {
 
         UserEntity userEntity = user.get();
         GroupEntity group = userEntity.getGroup();
+        User result = UserEntity.toUserDomain(userEntity);
         group.removeUser(userEntity);
+        return result;
     }
 
     @Override
     public User getUserByUserId(String userId) {
-        Optional<UserEntity> user = userJpaRepository.findByUserId(userId);
-        if (user.isEmpty())
+        Optional<UserEntity> userEntity = userJpaRepository.findByUserId(userId);
+        if (userEntity.isEmpty())
             throw new ServiceValidException(SERVICE_VALID_EX_FAIL_USER_FIND);
 
-        return userMapper.fromUserJpaEntity(user.get());
+        return UserEntity.toUserDomain(userEntity.get());
     }
 
     @Override
@@ -69,11 +68,12 @@ public class UserServiceImpl implements UserService {
         Iterable<UserEntity> users = userJpaRepository.findAll();
 
         return StreamSupport.stream(users.spliterator(), false)
-                .map(userMapper::fromUserJpaEntity)
+                .map(UserEntity::toUserDomain)
                 .collect(Collectors.toList());
     }
 
-    private UserEntity createUserEntity(RequestCreateUser requestUser) {
+    @Transactional
+    protected UserEntity createUserEntity(RequestCreateUser requestUser) {
         String groupName = requestUser.getGroup();
         GroupEntity groupEntity = groupRepository.findByGroupName(groupName);
         if (groupEntity == null) {
