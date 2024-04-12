@@ -3,6 +3,7 @@ package my.project.msa.user_service.dto.response;
 import lombok.*;
 import my.project.msa.user_service.domain_model.Group;
 import my.project.msa.user_service.domain_model.User;
+import my.project.msa.user_service.domain_model.vo.GroupAuthority;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,16 +14,23 @@ import java.util.stream.Collectors;
 @Builder
 public class ResponseGroup {
 
-    private String groupId;
+    private Long groupId;
     private String groupName;
+    private GroupAuthority groupAuthority;
     private List<String> members;
 
     static public ResponseGroup fromGroup(Group group) {
-        return ResponseGroup.builder()
-                .groupName(group.getGroupName())
-                .members(group.getMembers().stream()
-                        .map(User::getName)
-                        .collect(Collectors.toList()))
-                .build();
+
+        ResponseGroupBuilder builder = ResponseGroup.builder()
+                .groupAuthority(group.getGroupAuthority())
+                .groupId(group.getGroupId())
+                .groupName(group.getGroupName());
+
+        if (group.getMembers() != null){
+            builder.members(group.getMembers().stream()
+                    .map(User::getName)
+                    .collect(Collectors.toList()));
+        }
+        return builder.build();
     }
 }

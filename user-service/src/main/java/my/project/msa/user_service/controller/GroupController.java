@@ -46,14 +46,14 @@ public class GroupController {
     public ResponseEntity<ResponseGroup> createGroup(@Valid @RequestBody RequestGroup requestGroup){
 
         Group group = RequestGroup.toGroup(requestGroup);
-        Long groupId = groupService.createGroup(group);
+        Group createdGroup = groupService.createGroup(group);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{groupId}")
-                .buildAndExpand(groupId).toUri();
+                .buildAndExpand(createdGroup.getGroupId()).toUri();
 
-        return ResponseEntity.created(location).body(ResponseGroup.fromGroup(Objects.requireNonNull(group)));
+        return ResponseEntity.created(location).body(ResponseGroup.fromGroup(Objects.requireNonNull(createdGroup)));
     }
 
     @PostMapping("/groups/{groupId}/modify")
@@ -62,7 +62,7 @@ public class GroupController {
 
         Group group = RequestGroup.toGroup(requestGroup);
 
-        Group modifiedGroup = groupService.modifyGroup(groupId, group, requestGroup.getEncodedSecretKey());
+        Group modifiedGroup = groupService.modifyGroup(groupId, group, requestGroup.getSecretKey());
 
         return ResponseEntity.ok().body(ResponseGroup.fromGroup(modifiedGroup));
     }
@@ -73,7 +73,7 @@ public class GroupController {
 
         Group group = RequestRemoveGroup.toGroup(requestRemoveGroup);
 
-        Group removedGroup = groupService.removeGroup(groupId, group, requestRemoveGroup.getEncodedSecretKey());
+        Group removedGroup = groupService.removeGroup(groupId, group, requestRemoveGroup.getSecretKey());
 
         return ResponseEntity.ok().body(ResponseGroup.fromGroup(removedGroup));
     }

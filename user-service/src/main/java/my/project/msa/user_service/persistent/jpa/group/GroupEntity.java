@@ -59,12 +59,18 @@ public class GroupEntity extends CreatedBaseEntity {
     }
 
     public static Group toGroupDomain(GroupEntity groupEntity) {
-        return Group.builder()
-                .groupName(groupEntity.groupName)
-                .groupAuthority(groupEntity.groupAuthority)
-                .members(groupEntity.getMembers().stream()
-                        .map(UserEntity::toUserDomain)
-                        .toList())
-                .build();
+        Group.GroupBuilder builder = Group.builder()
+                .groupId(groupEntity.getId())
+                .groupName(groupEntity.getGroupName())
+                .groupAuthority(groupEntity.getGroupAuthority());
+
+        if (groupEntity.getMembers() != null) {
+            builder.members(groupEntity.getMembers().stream()
+                    .map(UserEntity::toUserDomain)
+                    .toList());
+        }
+
+        return builder.build();
     }
 }
+

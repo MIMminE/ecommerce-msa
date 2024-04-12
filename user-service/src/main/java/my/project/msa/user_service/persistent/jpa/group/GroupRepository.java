@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface GroupRepository extends JpaRepository<GroupEntity, Long> {
     GroupEntity findByGroupName(String groupName);
 
-    @Query("update GroupEntity g SET g.groupAuthority = :groupAuthority where g.id = :id and g.encodedSecretKey = :encodedKey")
-    GroupEntity updateGroupAuthority(Long id, String encodedKey, GroupAuthority groupAuthority);
+    @Query("SELECT g FROM GroupEntity g where g.id = :id and g.encodedSecretKey = :encodedKey")
+    GroupEntity findGroupEntityForModify(Long id, String encodedKey);
 
 }

@@ -10,11 +10,12 @@ import my.project.msa.user_service.domain_model.Group;
 public class RequestRemoveGroup {
 
     private String groupName;
-    private String encodedSecretKey;
+    private String secretKey;
 
     public static Group toGroup(RequestRemoveGroup request){
         return Group.builder()
                 .groupName(request.getGroupName())
+                .secretKey(request.getSecretKey())
                 .build();
     }
 }

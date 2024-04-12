@@ -6,7 +6,7 @@ public interface GroupService {
 
     Iterable<Group> getGroups();
 
-    Long createGroup(Group group);
+    Group createGroup(Group group);
 
     Group findGroup(Long groupId);
 

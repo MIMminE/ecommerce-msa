@@ -26,13 +26,13 @@ public class RequestGroup {
 
     @NotBlank(message = REQUEST_VALID_SECRET_KEY_NOT_BLANK)
     @Size(min = 8, max = 24, message = REQUEST_VALID_SECRET_KEY_SIZE)
-    private String encodedSecretKey;
+    private String secretKey;
 
     public static Group toGroup(RequestGroup request) {
         return Group.builder()
                 .groupName(request.getGroupName())
                 .groupAuthority(request.getGroupAuthority())
-                .secretKey(request.getEncodedSecretKey())
+                .secretKey(request.getSecretKey())
                 .members(new ArrayList<>())
                 .build();
     }

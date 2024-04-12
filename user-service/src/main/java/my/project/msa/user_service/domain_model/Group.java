@@ -10,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Group {
+    private Long groupId;
     private String groupName;
     private GroupAuthority groupAuthority;
     private List<User> members;
