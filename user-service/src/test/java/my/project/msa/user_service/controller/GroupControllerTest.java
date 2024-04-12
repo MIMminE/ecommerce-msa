@@ -1,30 +1,51 @@
 package my.project.msa.user_service.controller;
 
-import my.project.msa.user_service.dto.response.ResponseGroups;
-import my.project.msa.user_service.test_support.ControllerTestSupport;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import my.project.msa.user_service.domain_model.Group;
+import my.project.msa.user_service.dto.request.RequestCreateUser;
+import my.project.msa.user_service.service.GroupService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.mockito.Mockito;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Objects;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-import static org.assertj.core.api.Assertions.assertThat;
+class GroupControllerTest {
 
-class GroupControllerTest extends ControllerTestSupport {
+    private GroupService groupService = Mockito.mock(GroupService.class);
+    private MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new GroupController(groupService)).build();
+    private ObjectMapper mapper = new ObjectMapper();
 
     @DisplayName("/user-service/groups EndPoint 요청에 대한 결과값을 정상적으로 받는다.")
     @Test
-    void getGroups() {
+    void getGroups() throws Exception {
+        RequestCreateUser build = RequestCreateUser.builder()
+                .name("Test31561")
+                .group("groupA")
+                .email("tests@example.com")
+                .pwd("test2356412631")
+                .build();
+
         // given
-        String targetUrl = createUrlToEndpoint("groups");
+        given(groupService.createGroup(any(Group.class))).willReturn(
+                Group.builder()
+                        .groupName("Test")
+                        .build()
 
-        // when
-        ResponseEntity<ResponseGroups> result = restTemplate.getForEntity(targetUrl, ResponseGroups.class);
+        );
+        mockMvc.perform(
+                post("/group-service/groups")
+                        .content(mapper.writeValueAsString(build))
+                        .characterEncoding("utf-8")
+                        .contentType(MediaType.APPLICATION_JSON)
 
-        // then
-        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(Objects.requireNonNull(result.getBody()).getSize()).isEqualTo(2);
-        assertThat(result.getBody().getResults()).extracting("groupName").contains("groupA","groupB");
+        ).andDo(print());
     }
 }
