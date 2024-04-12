@@ -9,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.Objects;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class GroupControllerTest extends ControllerTestSupport {
 

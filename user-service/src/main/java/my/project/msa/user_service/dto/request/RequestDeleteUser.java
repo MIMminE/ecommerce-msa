@@ -2,11 +2,10 @@ package my.project.msa.user_service.dto.request;
 
 import lombok.*;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class RequestDeleteUser {
     String pwd;
-
 }

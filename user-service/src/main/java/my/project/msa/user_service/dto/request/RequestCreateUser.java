@@ -7,8 +7,10 @@ import lombok.*;
 
 import static my.project.msa.user_service.exception.ExceptionHolder.*;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class RequestCreateUser {
 
     @NotNull(message = EMAIL_EX_NOTNULL_MESSAGE )
@@ -25,12 +27,4 @@ public class RequestCreateUser {
 
     @NotNull(message = GROUP_EX_NOTNULL_MESSAGE)
     private String group;
-
-    @Builder
-    private RequestCreateUser(String email, String pwd, String name, String group) {
-        this.email = email;
-        this.pwd = pwd;
-        this.name = name;
-        this.group = group;
-    }
 }

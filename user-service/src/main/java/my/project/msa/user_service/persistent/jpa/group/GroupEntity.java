@@ -51,7 +51,7 @@ public class GroupEntity extends CreatedBaseEntity {
 
     public static GroupEntity fromGroupDomain(Group group) {
         return GroupEntity.builder()
-                .groupName(group.getGroupName())
+                .groupName(group.getGroupName() != null ? group.getGroupName() : null)
                 .groupAuthority(group.getGroupAuthority())
                 .encodedSecretKey(null)
                 .members(null)

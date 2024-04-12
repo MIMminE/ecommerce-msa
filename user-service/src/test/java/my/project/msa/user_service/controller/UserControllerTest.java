@@ -4,12 +4,8 @@ import my.project.msa.user_service.dto.request.RequestCreateUser;
 import my.project.msa.user_service.dto.request.RequestDeleteUser;
 import my.project.msa.user_service.dto.response.ResponseUser;
 import my.project.msa.user_service.dto.response.ResponseUsers;
-import my.project.msa.user_service.persistent.jpa.group.GroupEntity;
-import my.project.msa.user_service.persistent.jpa.user.UserEntity;
 import my.project.msa.user_service.test_support.ControllerTestSupport;
 import org.assertj.core.groups.Tuple;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
@@ -190,7 +185,7 @@ class UserControllerTest extends ControllerTestSupport {
         String userId = Objects.requireNonNull(createdResponse.getBody()).getUserId();
 
         String url = createUrlToEndpoint(String.format("users/%s/remove", userId));
-        RequestDeleteUser request = new RequestDeleteUser(testPassword);
+        RequestDeleteUser request = RequestDeleteUser.builder().pwd(testPassword).build();
 
         // when
         ResponseEntity<ResponseUser> result = restTemplate.postForEntity(url, request, ResponseUser.class);
@@ -224,7 +219,7 @@ class UserControllerTest extends ControllerTestSupport {
         String userId = Objects.requireNonNull(createdResponse.getBody()).getUserId();
 
         String url = createUrlToEndpoint(String.format("users/%s/remove", userId));
-        RequestDeleteUser request = new RequestDeleteUser("failPassword");
+        RequestDeleteUser request = RequestDeleteUser.builder().pwd("failPassword").build();
 
         // when
         ResponseEntity<String> result = restTemplate.postForEntity(url, request, String.class);

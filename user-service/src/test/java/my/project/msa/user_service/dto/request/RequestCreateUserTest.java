@@ -30,7 +30,7 @@ class RequestCreateUserTest {
 
         // when
         Set<ConstraintViolation<RequestCreateUser>> violations = validator.validate(requestCreateUser);
-        System.out.println(violations);
+
         // then
         assertThat(violations.iterator().next().getMessage())
                 .isEqualTo(EMAIL_EX_NOTNULL_MESSAGE);

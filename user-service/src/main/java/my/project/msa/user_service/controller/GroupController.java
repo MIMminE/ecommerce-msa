@@ -56,7 +56,7 @@ public class GroupController {
         return ResponseEntity.created(location).body(ResponseGroup.fromGroup(Objects.requireNonNull(createdGroup)));
     }
 
-    @PostMapping("/groups/{groupId}/modify")
+    @PutMapping("/groups/{groupId}")
     public ResponseEntity<ResponseGroup> modifyGroup(@PathVariable Long groupId,
                                                      @Valid @RequestBody RequestGroup requestGroup){
 
@@ -67,7 +67,7 @@ public class GroupController {
         return ResponseEntity.ok().body(ResponseGroup.fromGroup(modifiedGroup));
     }
 
-    @PostMapping("groups/{groupId}/remove")
+    @DeleteMapping("groups/{groupId}")
     public ResponseEntity<ResponseGroup> removeGroup(@PathVariable Long groupId,
                                                      @Valid @RequestBody RequestRemoveGroup requestRemoveGroup){
 

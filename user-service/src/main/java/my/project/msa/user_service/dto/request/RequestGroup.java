@@ -13,7 +13,7 @@ import static my.project.msa.user_service.exception.ExceptionHolder.*;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class RequestGroup {
 
@@ -21,7 +21,7 @@ public class RequestGroup {
     @Size(min = 2, max = 16, message = REQUEST_VALID_GROUP_NAME_SIZE)
     private String groupName;
 
-    @NotNull
+    @NotNull(message = REQUEST_VALID_GROUP_AUTHORITY_NOT_NULL)
     private GroupAuthority groupAuthority;
 
     @NotBlank(message = REQUEST_VALID_SECRET_KEY_NOT_BLANK)
@@ -36,5 +36,4 @@ public class RequestGroup {
                 .members(new ArrayList<>())
                 .build();
     }
-
 }

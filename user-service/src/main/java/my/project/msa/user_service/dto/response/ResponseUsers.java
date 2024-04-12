@@ -1,14 +1,14 @@
 package my.project.msa.user_service.dto.response;
 
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.List;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@Builder
 public class ResponseUsers implements Serializable {
     int size;
     List<ResponseUser> result;
