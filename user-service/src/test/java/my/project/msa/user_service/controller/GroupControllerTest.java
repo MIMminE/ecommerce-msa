@@ -2,50 +2,77 @@ package my.project.msa.user_service.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import my.project.msa.user_service.domain_model.Group;
-import my.project.msa.user_service.dto.request.RequestCreateUser;
+import my.project.msa.user_service.domain_model.User;
+import my.project.msa.user_service.domain_model.vo.GroupAuthority;
+import my.project.msa.user_service.dto.request.RequestGroup;
+import my.project.msa.user_service.dto.response.ResponseGroup;
 import my.project.msa.user_service.service.GroupService;
+import my.project.msa.user_service.support.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation;
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class GroupControllerTest {
+class GroupControllerTest extends RestDocsSupport {
 
-    private GroupService groupService = Mockito.mock(GroupService.class);
-    private MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new GroupController(groupService)).build();
-    private ObjectMapper mapper = new ObjectMapper();
+    private final GroupService groupService = Mockito.mock(GroupService.class);
+    private final ObjectMapper mapper = new ObjectMapper();
+
+    @Override
+    protected Object initController() {
+        return new GroupController(groupService);
+    }
 
     @DisplayName("/user-service/groups EndPoint 요청에 대한 결과값을 정상적으로 받는다.")
     @Test
     void getGroups() throws Exception {
-        RequestCreateUser build = RequestCreateUser.builder()
-                .name("Test31561")
-                .group("groupA")
-                .email("tests@example.com")
-                .pwd("test2356412631")
+
+        RequestGroup requestGroup = RequestGroup.builder()
+                .groupName("TestGroup")
+                .groupAuthority(GroupAuthority.builder()
+                        .livestock(true).aquatic(true).agricultural(true)
+                        .build())
+                .secretKey("TestSecretKey")
                 .build();
+
 
         // given
         given(groupService.createGroup(any(Group.class))).willReturn(
                 Group.builder()
+                        .groupId(15L)
                         .groupName("Test")
-                        .build()
+                        .groupAuthority(GroupAuthority.builder()
+                                .agricultural(true)
+                                .aquatic(true)
+                                .livestock(false)
+                                .build())
+                        .members(List.of(User.builder()
+                                .name("testUser1")
+                                .userId("testUserId1")
+                                .build(), User.builder()
+                                .name("testUser2")
+                                .userId("testUserId2")
+                                .build()))
+                        .build());
 
-        );
         mockMvc.perform(
-                post("/group-service/groups")
-                        .content(mapper.writeValueAsString(build))
-                        .characterEncoding("utf-8")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        post("/group-service/groups")
+                                .content(mapper.writeValueAsString(requestGroup))
+                                .characterEncoding("utf-8")
+                                .contentType(MediaType.APPLICATION_JSON)
 
-        ).andDo(print());
+                ).andExpect(status().isCreated())
+                .andDo(print())
+                .andDo(restDocsFactory.document("groupTestApiDocs", RequestGroup.class, ResponseGroup.class));
     }
 }
