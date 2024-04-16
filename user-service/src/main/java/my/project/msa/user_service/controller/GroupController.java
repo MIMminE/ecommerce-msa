@@ -8,7 +8,6 @@ import my.project.msa.user_service.dto.request.RequestRemoveGroup;
 import my.project.msa.user_service.dto.response.ResponseGroup;
 import my.project.msa.user_service.dto.response.ResponseGroups;
 import my.project.msa.user_service.service.GroupService;
-import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;

@@ -17,20 +17,35 @@
         <java.version>17</java.version>
         <spring-cloud.version>2023.0.0</spring-cloud.version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.github.MIMminE</groupId>-->
+        <!--            <artifactId>rest-docs-factory</artifactId>-->
+        <!--            <version>0.1</version>-->
+        <!--        </dependency>-->
+
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>spring.restdocsfactory</groupId>
+            <artifactId>rest_docs_factory</artifactId>
+            <version>1.0</version>
         </dependency>
+
         <!--        <dependency>-->
         <!--            <groupId>org.springframework.cloud</groupId>-->
         <!--            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>-->
         <!--        </dependency>-->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
@@ -48,6 +63,13 @@
             <scope>test</scope>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.navercorp.fixturemonkey</groupId>
+            <artifactId>fixture-monkey-starter</artifactId>
+            <version>1.0.15</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
@@ -87,6 +109,14 @@
             <groupId>org.springframework.restdocs</groupId>
             <artifactId>spring-restdocs-mockmvc</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
         </dependency>
 
 
