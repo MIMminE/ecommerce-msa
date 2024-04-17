@@ -37,9 +37,15 @@
         <!--        </dependency>-->
 
         <dependency>
-            <groupId>spring.restdocsfactory</groupId>
+            <groupId>nuts.lib</groupId>
             <artifactId>rest_docs_factory</artifactId>
             <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>nuts.lib</groupId>
+            <artifactId>fixture-factory</artifactId>
+            <version>0.1</version>
         </dependency>
 
         <!--        <dependency>-->
