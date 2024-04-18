@@ -2,6 +2,7 @@ package my.project.msa.user_service.domain_model;
 
 import lombok.*;
 
+@ToString
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
